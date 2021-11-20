@@ -4,6 +4,7 @@ from dash import dcc
 from dash import html
 from datetime import date, datetime as dt
 from dash.dependencies import Input, Output, State
+from dash.exceptions import PreventUpdate
 import yfinance as yf
 import pandas as pd
 import plotly.graph_objs as go
@@ -22,8 +23,8 @@ app.layout = html.Div(
                 html.Div(
                     [
                     # Input box for to enter stock ticker, default value will be 'SBIN.NS'
-                    dcc.Input(id='stock_code', value= 'SBIN.NS',placeholder= 'Input here', type= 'text', className='inputs'),
-                    #html.Button('Submit', id='submit-stock', className='inputs', n_clicks=0)
+                    dcc.Input(id='stock_code', value= '',placeholder= 'Input here', type= 'text', className='inputs'),
+                    html.Button('Submit', id='submit-stock', className='buttons', n_clicks=0)
 
                     ],className=''
                 ),
@@ -33,7 +34,10 @@ app.layout = html.Div(
                         #Date range input, if nothing given default will be 1st jan 2020 to today
                         dcc.DatePickerRange(
                             id = 'date-range',
-                            className='inputs'
+                            min_date_allowed=dt(1995,8,5),
+                            max_date_allowed=dt.today(),
+                            initial_visible_month=dt.now(),
+                            className=''
                         )
                     ],className=''
 
@@ -42,8 +46,13 @@ app.layout = html.Div(
                 html.Div(
                     [
                         #two buttons below
-                        html.Button('Stock Price', id='stock_price', className=''),
-                        html.Button('Indicators', id='indicators', className=''),
+                        html.Button('Stock Price', id='stock_price', className='buttons'),
+                        html.Button('Indicators', id='indicators', className='buttons'),
+                        
+                    ],className=''
+                ),
+                html.Div(
+                    [
                         # Input box to enter number of days to forcast future price and button to intiate task
                         dcc.Input(id='n_days',value = '', type='text', placeholder='Days here', className=''),
                         html.Button('Forecast', id='Forecast', className='')
@@ -59,11 +68,11 @@ app.layout = html.Div(
             html.Div(
                 [
                     html.Img(id='logo'),
-                    html.P(id='ticker')
-                ],className=''
+                    html.H2(id='ticker')
+                ],className='header'
             ),
-            html.Div(id='description'),
-            html.Div([], id='stonks'),
+            html.Div(id='description',),
+            html.Div([], id='stonks-graph'),
             #html.Div()
 
 
@@ -72,32 +81,59 @@ app.layout = html.Div(
     ], className='container')
 
 
-
-    
-    
-
-@app.callback(
-    Output(component_id='stonks', component_property='children'),
-    #Input(component_id='submit', component_property='n_clicks'),
-    [Input(component_id='stock_code', component_property='value')],
-    Input('date-range','start_date'),
-    Input('date-range','end_date')
+#callback for updating logo and stock description
+@app.callback([
+    Output('logo', 'src'),
+    Output('ticker', 'children'),
+    Output('description', 'children')],
+    [Input('submit-stock', 'n_clicks')],
+    [State('stock_code', 'value')]
 )
-def update_mygraph(stock_code, start, end):
-    
-    #if start is not selected, we will assume it as 1st Jan 2020
-    if start is None:
-        start = date(2020, 1, 1)
-    #if end date is not selected, set end date as current day
-    if end is None:
-        end = dt.today()
 
-    #stock code will match on yahoo finance and data will fetch to genrate graph
-    tk = yf.Ticker(stock_code)
-    data = pd.DataFrame(tk.history(start=start, end=end))
-    name = tk.info['shortName']
-    fig = {'data': [{'x': data.index,'y': data.Close, 'type': 'Candlestick', 'name': stock_code}, ], 'layout': {'title': name}}
-    return dcc.Graph(figure= fig)
+def update_data(n, stock_code):
+    #if user provided nothing, then default output will following
+    if n==0 :
+        return 'https://www.linkpicture.com/q/stonks_1.jpg','stonks','Hey! Enter stock Ticker to get information'
+    else:
+        tk = yf.Ticker(stock_code)
+        sinfo = tk.info
+        #df = pd.DataFrame(sinfo)
+        return sinfo['logo_url'], sinfo['shortName'], sinfo['longBusinessSummary']
+
+
+    
+    
+#callback for updating graph for selected time range
+@app.callback(
+    Output(component_id='stonks-graph', component_property='children'),
+    [Input(component_id='submit-stock', component_property='n_clicks'),
+    Input('date-range','start_date'),
+    Input('date-range','end_date')],
+    [State(component_id='stock_code', component_property='value')]
+)
+def update_mygraph(n, start, end,stock_code):
+    if n==0:
+        return ''
+
+    elif stock_code=='':
+        raise PreventUpdate
+
+    else:
+        #if start is not selected, we will assume it as 1st Jan 2020
+        if start is None:
+            start = date(2020, 1, 1)
+        #if end date is not selected, set end date as current day
+        if end is None:
+            end = dt.today()
+
+        #stock code will match on yahoo finance and data will fetch to genrate graph
+        tk = yf.Ticker(stock_code)
+        data = pd.DataFrame(tk.history(start=start, end=end))
+        name = tk.info['shortName']
+        fig = {'data': [{'x': data.index,'y': data.Close, 'type': 'Candlestick', 'name': stock_code}, ], 'layout': {'title': name}}
+        return dcc.Graph(figure= fig)
+
+
 
 if __name__ =='__main__':
     app.run_server(debug = True)
