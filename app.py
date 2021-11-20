@@ -14,39 +14,62 @@ app = dash.Dash(__name__)
 server = app.server
 
 
-app.layout = html.Div(className='container',
-    children=[  
-        html.Div(className='lefty',children=[
-            html.H2("Welcome to the Stock Dash App!", className="name"),
-            html.Div([
-                # Input box for to enter stock ticker, default value will be 'SBIN.NS'
-                dcc.Input(id='stock_code', value= 'SBIN.NS',placeholder= 'Input here', type= 'text', className='inputs'),
-                #html.Button('Submit', id='submit-stock', className='inputs', n_clicks=0)
+app.layout = html.Div(
+    [  
+        html.Div(
+            [
+                html.H2("Welcome to the Stock Dash App!", className=""),
+                html.Div(
+                    [
+                    # Input box for to enter stock ticker, default value will be 'SBIN.NS'
+                    dcc.Input(id='stock_code', value= 'SBIN.NS',placeholder= 'Input here', type= 'text', className='inputs'),
+                    #html.Button('Submit', id='submit-stock', className='inputs', n_clicks=0)
 
-                #Date range input, if nothing given default will be 1st jan 2020 to today
-                dcc.DatePickerRange(
-                    id = 'date-range',
-                    className='inputs'
+                    ],className=''
                 ),
-                # Input box to enter number of days to forcast future price and button to intiate task
-                dcc.Input(id='days',value = '', type='text', placeholder='Days here', className='inputs'),# Number of days of forecast input
-                html.Button('Forecast', id='Forecast', className='inputs')
 
-            ]),
+                html.Div(
+                    [
+                        #Date range input, if nothing given default will be 1st jan 2020 to today
+                        dcc.DatePickerRange(
+                            id = 'date-range',
+                            className='inputs'
+                        )
+                    ],className=''
+
+                ),
+
+                html.Div(
+                    [
+                        #two buttons below
+                        html.Button('Stock Price', id='stock_price', className=''),
+                        html.Button('Indicators', id='indicators', className=''),
+                        # Input box to enter number of days to forcast future price and button to intiate task
+                        dcc.Input(id='n_days',value = '', type='text', placeholder='Days here', className=''),
+                        html.Button('Forecast', id='Forecast', className='')
+                    ],className=''
+                )
             
-        ]),
-#2nd part, this should be on right side of screen, will display graph
-        html.Div([
-            html.Div(className='container', children=[
-                
-                html.Div( 
-                    id="stonks"),
-               
+            ],className='nav'
+        ),
+
+        #2nd part, this should be on right side of screen, will display graph
+        html.Div(
+            [
+            html.Div(
+                [
+                    html.Img(id='logo'),
+                    html.P(id='ticker')
+                ],className=''
+            ),
+            html.Div(id='description'),
+            html.Div([], id='stonks'),
+            #html.Div()
 
 
-        ])
-
-])])
+            ],className=''
+        )
+    ], className='container')
 
 
 

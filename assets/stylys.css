@@ -4,14 +4,24 @@
     box-sizing: 0px;
     font-family: 'Roboto', sans-serif;
 }
+body{
+    overflow: hidden;
+}
 
 .container{
+    display: flex;   
+    
+}
+
+.nav {
+    /*position: fixed;*/
+    width: 25vw;
+    /* height: 100%; */
+    align-items: center;
     display: flex;
+    justify-content: flex-start;
     flex-direction: column;
-    align-content: flex-end;
-    border: 2px black;
-    
-    
+    background-color: rgb(5, 107, 107);
 }
 
 .inputs {
@@ -21,17 +31,4 @@
     flex-direction: column;
     justify-content: space-around;
     background-color: rgb(144, 172, 172);
-    }
-
-.lefty{
-    display: flex;
-    flex-direction: column;
-    align-content: center;
-    height: 100%;
-    border: 1px  white;
-
 }
-.name{
-    color: white;
-}
-
