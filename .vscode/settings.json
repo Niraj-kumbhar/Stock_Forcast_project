@@ -3,6 +3,7 @@
         "mygraph",
         "objs",
         "plotly",
+        "sinfo",
         "stonks",
         "yfinance"
     ]

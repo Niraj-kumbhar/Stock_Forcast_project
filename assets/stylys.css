@@ -19,12 +19,12 @@ body{
 .nav {
     /*position: fixed;*/
     width: 30%;
-    /*height: 100%;*/
     align-items: center;
     display: flex;
     justify-content: space-around;
     flex-direction: column;
     background-color: rgb(97, 156, 137);
+    min-height: 800px;
     
     
 }
@@ -56,4 +56,13 @@ body{
 .date{
     border-radius: 8px;
     background-color: grey;
+}
+
+.outputContainer{
+    
+    width: 85%;
+    
+}
+.graphs{
+    border: 1px black;
 }

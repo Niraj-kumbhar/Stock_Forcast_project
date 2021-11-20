@@ -7,7 +7,8 @@ from dash.dependencies import Input, Output, State
 from dash.exceptions import PreventUpdate
 import yfinance as yf
 import pandas as pd
-import plotly.graph_objs as go
+import plotly.graph_objs
+import plotly.graph_objects as go
 import plotly.express as px
 import pandas_datareader.data as web
 
@@ -37,7 +38,7 @@ app.layout = html.Div(
                             min_date_allowed=dt(1995,8,5),
                             max_date_allowed=dt.today(),
                             initial_visible_month=dt.now(),
-                            className=''
+                            className='inputs'
                         )
                     ],className=''
 
@@ -54,8 +55,8 @@ app.layout = html.Div(
                 html.Div(
                     [
                         # Input box to enter number of days to forcast future price and button to intiate task
-                        dcc.Input(id='n_days',value = '', type='text', placeholder='Days here', className=''),
-                        html.Button('Forecast', id='Forecast', className='')
+                        dcc.Input(id='n_days',value = '', type='text', placeholder='Days here', className='inputs'),
+                        html.Button('Forecast', id='Forecast', className='buttons')
                     ],className=''
                 )
             
@@ -72,11 +73,11 @@ app.layout = html.Div(
                 ],className='header'
             ),
             html.Div(id='description',),
-            html.Div([], id='stonks-graph'),
+            html.Div([], id='stonks-graph', className='graphs'),
             #html.Div()
 
 
-            ],className=''
+            ],className='outputContainer'
         )
     ], className='container')
 
@@ -106,7 +107,7 @@ def update_data(n, stock_code):
 #callback for updating graph for selected time range
 @app.callback(
     Output(component_id='stonks-graph', component_property='children'),
-    [Input(component_id='submit-stock', component_property='n_clicks'),
+    [Input(component_id='stock_price', component_property='n_clicks'),
     Input('date-range','start_date'),
     Input('date-range','end_date')],
     [State(component_id='stock_code', component_property='value')]
@@ -128,10 +129,19 @@ def update_mygraph(n, start, end,stock_code):
 
         #stock code will match on yahoo finance and data will fetch to genrate graph
         tk = yf.Ticker(stock_code)
-        data = pd.DataFrame(tk.history(start=start, end=end))
         name = tk.info['shortName']
-        fig = {'data': [{'x': data.index,'y': data.Close, 'type': 'Candlestick', 'name': stock_code}, ], 'layout': {'title': name}}
-        return dcc.Graph(figure= fig)
+        df = pd.DataFrame(yf.download(stock_code,start=start, end=end))
+        df.reset_index(inplace=True)
+        df['Date']=pd.to_datetime(df['Date'])
+        fig = go.Figure(data=[
+                go.Candlestick(
+                    x=df['Date'],
+                    open=df['Open'], high=df['High'],
+                    low=df['Low'], close=df['Close']
+                )
+            ])
+        fig.update_layout(xaxis_rangeslider_visible=False)
+        return dcc.Graph(figure=fig)
 
 
 
