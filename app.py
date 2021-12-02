@@ -48,7 +48,7 @@ app.layout = html.Div(
                     [
                         #two buttons below
                         html.Button('Stock Price', id='stock_price', className='buttons'),
-                        html.Button('Indicators', id='indicators', className='buttons'),
+                        html.Button('Indicators', id='indicators', n_clicks=0, className='buttons'),
                         
                     ],className=''
                 ),
@@ -63,7 +63,8 @@ app.layout = html.Div(
             ],className='nav'
         ),
 
-        #2nd part, this should be on right side of screen, will display graph
+        # !2nd part, this should be on right side of screen, will display graph
+
         html.Div(
             [
             html.Div(
@@ -93,7 +94,7 @@ app.layout = html.Div(
 
 def update_data(n, stock_code):
     #if user provided nothing, then default output will following
-    if n==0 :
+    if n==0 or stock_code=='' :
         return 'https://www.linkpicture.com/q/stonks_1.jpg','stonks','Hey! Enter stock Ticker to get information'
     else:
         tk = yf.Ticker(stock_code)
@@ -108,11 +109,12 @@ def update_data(n, stock_code):
 @app.callback(
     Output(component_id='stonks-graph', component_property='children'),
     [Input(component_id='stock_price', component_property='n_clicks'),
+    Input('indicators', 'n_clicks'),
     Input('date-range','start_date'),
     Input('date-range','end_date')],
     [State(component_id='stock_code', component_property='value')]
 )
-def update_mygraph(n, start, end,stock_code):
+def update_mygraph(n, ind, start, end,stock_code):
     if n==0:
         return ''
 
@@ -128,18 +130,21 @@ def update_mygraph(n, start, end,stock_code):
             end = dt.today()
 
         #stock code will match on yahoo finance and data will fetch to genrate graph
-        tk = yf.Ticker(stock_code)
-        name = tk.info['shortName']
         df = pd.DataFrame(yf.download(stock_code,start=start, end=end))
         df.reset_index(inplace=True)
         df['Date']=pd.to_datetime(df['Date'])
+        df['ema20'] = df['Close'].rolling(20).mean()
         fig = go.Figure(data=[
                 go.Candlestick(
                     x=df['Date'],
                     open=df['Open'], high=df['High'],
                     low=df['Low'], close=df['Close']
-                )
+                ),
+                #go.Scatter()
             ])
+        
+        if ind in [1,3,5,7,9,11,13,15,17]:
+            fig.add_scatter(x=df['Date'], y=df['ema20'], line=dict(color= 'blue', width=1))
         fig.update_layout(xaxis_rangeslider_visible=False)
         return dcc.Graph(figure=fig)
 
