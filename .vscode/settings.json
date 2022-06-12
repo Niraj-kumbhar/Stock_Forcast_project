@@ -6,5 +6,6 @@
         "sinfo",
         "stonks",
         "yfinance"
-    ]
+    ],
+    "python.formatting.provider": "black"
 }
