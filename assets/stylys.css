@@ -17,14 +17,19 @@ body{
 }
 
 .nav {
-    /*position: fixed;*/
-    width: 30%;
+    position: fixed;
+    width: 25%;
     align-items: center;
     display: flex;
     justify-content: space-around;
     flex-direction: column;
-    background-color: rgb(97, 156, 137);
-    min-height: 800px;
+    background-color: #203447;
+    min-height: 860px;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    overflow-x: hidden;
+    padding-top: 20px;
     
     
 }
@@ -37,7 +42,7 @@ body{
   }
 
 .buttons{
-    background-color: rgb(31, 30, 30);
+    background-color: rgb(19, 89, 92);
     color: white;
     text-align: center;
     border-radius: 8px;
@@ -45,7 +50,7 @@ body{
 }
 
 .buttons:hover{
-    background-color: grey;
+    background-color: rgb(42, 56, 119);
     color: black;
 }
 .inputs{
@@ -61,8 +66,23 @@ body{
 .outputContainer{
     
     width: 85%;
+    margin-left: 25%;
+    background-color: #8899A6;
+    height: 100%;
     
 }
 .graphs{
     border: 1px black;
+}
+
+.imglogo{
+    max-width: 15rem;
+    height: auto;
+}
+.info{
+    align-content: center;
+    align-items: center;
+}
+.heading{
+    color: cornflowerblue;
 }
