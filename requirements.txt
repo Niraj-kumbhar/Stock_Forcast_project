@@ -1,4 +1,4 @@
-﻿dash==2.0.0
+dash==2.0.0
 dash-core-components==2.0.0
 dash-html-components==2.0.0
 dash-table==5.0.0
@@ -13,15 +13,3 @@ plotly==5.4.0
 # scipy==1.7.3
 # sklearn==0.0
 # yfinance==0.1.67
-
-dash-renderer==1.8.2
-Flask==1.1.2
-Flask-Compress==1.5.0
-gunicorn==20.0.4
-lxml==4.5.2
-numpy==1.18.5
-pandas==1.1.2
-scikit-learn==0.23.2
-scipy==1.5.2
-sklearn==0.0
-yfinance==0.1.67

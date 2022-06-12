@@ -5,12 +5,14 @@ from dash import html
 from datetime import date, datetime as dt
 from dash.dependencies import Input, Output, State
 from dash.exceptions import PreventUpdate
+from matplotlib.pyplot import title
 import yfinance as yf
 import pandas as pd
 import plotly.graph_objs
 import plotly.graph_objects as go
 import plotly.express as px
 import pandas_datareader.data as web
+from model import predictionModel
 
 app = dash.Dash(__name__)
 server = app.server
@@ -20,7 +22,7 @@ app.layout = html.Div(
     [  
         html.Div(
             [
-                html.H2("Welcome to the Stock Dash App!", className=""),
+                html.H2("Welcome to the Stock Dash App!", className="heading"),
                 html.Div(
                     [
                     # Input box for to enter stock ticker, default value will be 'SBIN.NS'
@@ -38,6 +40,8 @@ app.layout = html.Div(
                             min_date_allowed=dt(1995,8,5),
                             max_date_allowed=dt.today(),
                             initial_visible_month=dt.now(),
+                            # end_date = dt.now(),
+                            start_date = date(2020,1,1),
                             className='inputs'
                         )
                     ],className=''
@@ -48,33 +52,36 @@ app.layout = html.Div(
                     [
                         #two buttons below
                         html.Button('Stock Price', id='stock_price', className='buttons'),
-                        html.Button('Indicators', id='indicators', className='buttons'),
+                        html.Button('Indicators', id='indicators', n_clicks=0, className='buttons'),
                         
                     ],className=''
                 ),
                 html.Div(
                     [
-                        # Input box to enter number of days to forcast future price and button to intiate task
+                        # Input box to enter number of days to forecast future price and button to initiate task
                         dcc.Input(id='n_days',value = '', type='text', placeholder='Days here', className='inputs'),
-                        html.Button('Forecast', id='Forecast', className='buttons')
+                        html.Button('Forecast', id='Forecast', className='buttons', n_clicks=0)
                     ],className=''
                 )
             
             ],className='nav'
         ),
 
-        #2nd part, this should be on right side of screen, will display graph
+        # !2nd part, this should be on right side of screen, will display graph
+
         html.Div(
             [
-            html.Div(
+            dcc.Loading( id='loading1',children=[html.Div(
                 [
-                    html.Img(id='logo'),
+                    html.Img(id='logo', className='imglogo'),
                     html.H2(id='ticker')
                 ],className='header'
             ),
-            html.Div(id='description',),
+            html.Div(id='description', className='info')], type='circle'),
             html.Div([], id='stonks-graph', className='graphs'),
-            #html.Div()
+            dcc.Loading(id='loading2',
+                children=[html.Div([], id='forecast-graph', className='graphs')],
+                type='circle')
 
 
             ],className='outputContainer'
@@ -93,7 +100,7 @@ app.layout = html.Div(
 
 def update_data(n, stock_code):
     #if user provided nothing, then default output will following
-    if n==0 :
+    if n==0 or stock_code=='' :
         return 'https://www.linkpicture.com/q/stonks_1.jpg','stonks','Hey! Enter stock Ticker to get information'
     else:
         tk = yf.Ticker(stock_code)
@@ -108,11 +115,12 @@ def update_data(n, stock_code):
 @app.callback(
     Output(component_id='stonks-graph', component_property='children'),
     [Input(component_id='stock_price', component_property='n_clicks'),
+    Input('indicators', 'n_clicks'),
     Input('date-range','start_date'),
     Input('date-range','end_date')],
     [State(component_id='stock_code', component_property='value')]
 )
-def update_mygraph(n, start, end,stock_code):
+def update_mygraph(n, ind, start, end,stock_code):
     if n==0:
         return ''
 
@@ -127,22 +135,50 @@ def update_mygraph(n, start, end,stock_code):
         if end is None:
             end = dt.today()
 
-        #stock code will match on yahoo finance and data will fetch to genrate graph
-        tk = yf.Ticker(stock_code)
-        name = tk.info['shortName']
+        #stock code will match on yahoo finance and data will fetch to generate graph
         df = pd.DataFrame(yf.download(stock_code,start=start, end=end))
         df.reset_index(inplace=True)
         df['Date']=pd.to_datetime(df['Date'])
-        fig = go.Figure(data=[
-                go.Candlestick(
-                    x=df['Date'],
-                    open=df['Open'], high=df['High'],
-                    low=df['Low'], close=df['Close']
-                )
-            ])
-        fig.update_layout(xaxis_rangeslider_visible=False)
+        df['ema20'] = df['Close'].rolling(20).mean()
+        fig = px.line(
+             df,
+             x='Date',
+             y=['Close'],
+             title='Stock Trend'
+         )
+        fig.update_traces(line_color='#ef3d3d')
+        #go.Figure(data=[
+        #         go.Candlestick(
+        #             x=df['Date'],
+        #             open=df['Open'], high=df['High'],
+        #             low=df['Low'], close=df['Close']
+        #         ),
+                #go.Scatter()
+        #    ])
+        
+        if ind in [1,3,5,7,9,11,13,15,17]:
+            fig.add_scatter(x=df['Date'], y=df['ema20'], line=dict(color= 'blue', width=1), name='EMA20')
+        fig.update_layout(
+            xaxis_rangeslider_visible=False,
+            xaxis_title="Date",
+            yaxis_title="Closed Price")
+        
         return dcc.Graph(figure=fig)
 
+@app.callback(
+    Output(component_id='forecast-graph', component_property='children'), 
+    [Input(component_id='Forecast', component_property='n_clicks'),
+    Input(component_id='n_days', component_property='value')],
+    [State(component_id='stock_code', component_property='value')]
+)
+def forecast(n, n_days, stock_code):
+    if n == None:
+        return ['']
+    if stock_code == '':
+        raise PreventUpdate
+    fig = predictionModel(int(n_days)+1, stock_code)
+    return dcc.Graph(figure=fig)
+    
 
 
 if __name__ =='__main__':
