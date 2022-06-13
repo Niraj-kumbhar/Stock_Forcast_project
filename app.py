@@ -67,7 +67,7 @@ app.layout = html.Div(
             ],className='nav'
         ),
 
-        # !2nd part, this should be on right side of screen, will display graph
+        # 2nd part, this should be on right side of screen, will display graph
 
         html.Div(
             [
