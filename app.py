@@ -22,7 +22,7 @@ app.layout = html.Div(
     [  
         html.Div(
             [
-                html.H2("Welcome to the Stock Dash App!", className="heading"),
+                html.H2("Welcome to the Stock Prediction App!", className="heading"),
                 html.Div(
                     [
                     # Input box for to enter stock ticker, default value will be 'SBIN.NS'
