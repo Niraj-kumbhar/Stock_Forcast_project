@@ -5,7 +5,7 @@ from dash import html
 from datetime import date, datetime as dt
 from dash.dependencies import Input, Output, State
 from dash.exceptions import PreventUpdate
-from matplotlib.pyplot import title
+#from matplotlib.pyplot import title
 import yfinance as yf
 import pandas as pd
 import plotly.graph_objs
