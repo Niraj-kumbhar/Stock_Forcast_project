@@ -24,7 +24,7 @@ body{
     justify-content: space-around;
     flex-direction: column;
     background-color: #203447;
-    min-height: 860px;
+    min-height: 100%;
     z-index: 1;
     top: 0;
     left: 0;
