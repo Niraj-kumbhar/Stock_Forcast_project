@@ -8,10 +8,10 @@ from dash.exceptions import PreventUpdate
 #from matplotlib.pyplot import title
 import yfinance as yf
 import pandas as pd
-import plotly.graph_objs
-import plotly.graph_objects as go
+#import plotly.graph_objs
+#import plotly.graph_objects as go
 import plotly.express as px
-import pandas_datareader.data as web
+#import pandas_datareader.data as web
 from model import predictionModel
 
 app = dash.Dash(__name__)
