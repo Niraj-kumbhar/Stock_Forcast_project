@@ -13,6 +13,19 @@ framework. Model is predicting stock price  using Support Vector Regression
 algorithm. App can predict next 5-10 days trend using past 60 days data.
 
 check this App on heroku: [stock-predict-dash.herokuapp.com](https://stock-predict-dash.herokuapp.com/)
+
+## Screenshots
+<img src="https://user-images.githubusercontent.com/89059809/174493701-b5485e58-ecae-4a4e-8706-4402fc800395.png" width="750" height="400" alt='Screenshot1'>
+<img src="https://user-images.githubusercontent.com/89059809/174493703-fd137ce4-e152-4f6e-b33d-93276e9000eb.png" width="750" height="400" alt='Screenshot2'>
+
+
+## Getting Started
+
+* Enter **Stock_ticker** Eg. _AAPL_ is for Apple. hit `Submit` button.
+* You can Specify Time range, default is 1st Jan 2020 till today.
+* Click on `Stock Price` button to see stock's actual price trend
+* Click `Indicators` button to see EMA20 Indicator on Stock price trend graph
+* Enter number between 1-15 and hit `Forecast` button, it will take some time to load predicted future trend 
  
 ## Download
  
