@@ -101,7 +101,7 @@ app.layout = html.Div(
 def update_data(n, stock_code):
     #if user provided nothing, then default output will following
     if n==0 or stock_code=='' :
-        return 'https://www.linkpicture.com/q/stonks.jpg','stonks','Hey! Enter stock Ticker to get information'
+        return 'https://www.linkpicture.com/q/stonks.jpg','','Hey! Enter stock Ticker to get information'
     else:
         tk = yf.Ticker(stock_code)
         sinfo = tk.info
