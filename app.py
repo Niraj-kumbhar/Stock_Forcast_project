@@ -71,17 +71,17 @@ app.layout = html.Div(
 
         html.Div(
             [
-            dcc.Loading( id='loading1',children=[html.Div(
+            dcc.Loading( id='loading1', color='#3b3b3b',children=[html.Div(
                 [
                     html.Img(id='logo', className='imglogo'),
                     html.H2(id='ticker')
                 ],className='header'
             ),
             html.Div(id='description', className='info')], type='circle'),
-            html.Div([], id='stonks-graph', className='graphs'),
-            dcc.Loading(id='loading2',
+            dcc.Loading(children=[html.Div([], id='stonks-graph', className='graphs')], id='loading2', type='graph'),
+            dcc.Loading(id='loading3',
                 children=[html.Div([], id='forecast-graph', className='graphs')],
-                type='circle')
+                type='graph')
 
 
             ],className='outputContainer'
