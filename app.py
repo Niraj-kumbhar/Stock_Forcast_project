@@ -22,11 +22,11 @@ app.layout = html.Div(
     [  
         html.Div(
             [
-                html.H2("Welcome to the Stock Price Prediction App!", className="heading"),
+                html.H2("Welcome to the Stock Trend Prediction App!", className="heading"),
                 html.Div(
                     [
                     # Input box for to enter stock ticker, default value will be 'SBIN.NS'
-                    dcc.Input(id='stock_code', value= '',placeholder= 'Input here', type= 'text', className='inputs'),
+                    dcc.Input(id='stock_code', value= '',placeholder= 'Input Stock Ticker here', type= 'text', className='inputs'),
                     html.Button('Submit', id='submit-stock', className='buttons', n_clicks=0)
 
                     ],className=''
@@ -59,7 +59,7 @@ app.layout = html.Div(
                 html.Div(
                     [
                         # Input box to enter number of days to forecast future price and button to initiate task
-                        dcc.Input(id='n_days',value = '', type='text', placeholder='Days here', className='inputs'),
+                        dcc.Input(id='n_days',value = '', type='text', placeholder='Number of Days for forecast', className='inputs'),
                         html.Button('Forecast', id='Forecast', className='buttons', n_clicks=0)
                     ],className=''
                 )
@@ -100,8 +100,16 @@ app.layout = html.Div(
 
 def update_data(n, stock_code):
     #if user provided nothing, then default output will following
+    desc = """
+    Hey! Enter stock Ticker to get information
+
+        1. Enter Stock ticker at input(AAPL for Apple.inc)
+        2. Hit Submit button and wait
+        3. Click Stock price button and Indicator button to get trend of stock price
+        4. Enter number of days between 1-15 to forecast the trend and hit forecast button
+        5. wait.....and Hurreeyy !! you got it."""
     if n==0 or stock_code=='' :
-        return 'https://www.linkpicture.com/q/stonks.jpg','','Hey! Enter stock Ticker to get information'
+        return 'https://www.linkpicture.com/q/stonks.jpg','',desc
     else:
         tk = yf.Ticker(stock_code)
         sinfo = tk.info
